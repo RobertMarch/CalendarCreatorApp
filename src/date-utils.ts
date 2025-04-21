@@ -16,7 +16,7 @@ export const MILLIS_IN_ONE_DAY = 24 * MILLIS_IN_ONE_HOUR;
 export const MILLIS_IN_ONE_WEEK = 7 * MILLIS_IN_ONE_DAY;
 
 export function formatTimestampAsDays(timestamp: number): number {
-  return Math.round(timestamp / MILLIS_IN_ONE_DAY);
+  return Math.floor(timestamp / MILLIS_IN_ONE_DAY);
 }
 
 export function formatTimestampAsTime(

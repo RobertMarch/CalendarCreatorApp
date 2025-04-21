@@ -64,6 +64,7 @@ export function EventsEditor({ events, setEvents }: EventsEditorProps) {
       <StyledButton
         displayText="Sort events"
         onClick={sortEvents}
+        disabled={!events.length}
       ></StyledButton>
 
       {eventInputs}
@@ -107,7 +108,7 @@ function EventInput({
   }
 
   return (
-    <div className="border-b border-gray-400 py-4 flex flex-col">
+    <div className="border-b border-gray-400 py-4 flex flex-col space-between space-y-1">
       <StyledInput
         label="Event title"
         value={calendarEvent.summary}
@@ -166,14 +167,14 @@ function StartTimeInput({
   ): string | number {
     switch (partName) {
       case "weeks":
-        return Math.max(Number.parseInt(nextValue), 0);
+        return nextValue ? Math.max(Number.parseInt(nextValue), 0) : 0;
       case "days":
-        return Math.max(
-          Number.parseInt(nextValue),
-          calendarEvent.isWholeDayEvent ? 1 : 0
-        );
+        const minValue: number = calendarEvent.isWholeDayEvent ? 1 : 0;
+        return nextValue
+          ? Math.max(Number.parseInt(nextValue), minValue)
+          : minValue;
       case "time":
-        return nextValue;
+        return nextValue ? nextValue : "00:00";
     }
   }
 

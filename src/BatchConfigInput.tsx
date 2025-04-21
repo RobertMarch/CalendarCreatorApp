@@ -2,7 +2,7 @@ import { BatchConfig } from "./calendar-batch-config";
 import { formatDateForInput } from "./date-utils";
 import { StyledInput } from "./StyledComponents";
 
-type CalendarBatchConfigProps = {
+type BatchConfigInputProps = {
   batchConfig: BatchConfig;
   setBatchConfig: (newBatchConfig: BatchConfig) => void;
 };
@@ -10,7 +10,7 @@ type CalendarBatchConfigProps = {
 export function BatchConfigInput({
   batchConfig,
   setBatchConfig,
-}: CalendarBatchConfigProps) {
+}: BatchConfigInputProps) {
   function setProperty(newValue: any, propertyName: keyof BatchConfig): void {
     const nextConfig: BatchConfig = {
       ...batchConfig,
