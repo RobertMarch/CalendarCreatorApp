@@ -35,7 +35,11 @@ function App() {
           ></BatchConfigInput>
         </Card>
         <Card>
-          <EventsEditor events={events} setEvents={setEvents}></EventsEditor>
+          <EventsEditor
+            events={events}
+            setEvents={setEvents}
+            batchConfig={batchConfig}
+          ></EventsEditor>
         </Card>
       </div>
     </>
@@ -43,7 +47,7 @@ function App() {
 }
 
 function Card({ children }: PropsWithChildren) {
-  return <div className="p-4 bg-white rounded-lg space-y-2">{children}</div>;
+  return <div className="p-4 bg-white rounded-lg">{children}</div>;
 }
 
 export default App;

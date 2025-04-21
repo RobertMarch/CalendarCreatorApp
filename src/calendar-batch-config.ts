@@ -1,5 +1,5 @@
 import { CalendarEvent } from "./calendar-event";
-import { formatDate } from "./date-utils";
+import { formatDateForIcs } from "./date-utils";
 
 export interface BatchConfig {
   startDate?: Date;
@@ -33,11 +33,11 @@ function generateIcsForCalendarEvent(
 ): string[] {
   const startDateEpoch =
     calendarConfig.startDate!.getTime() + event.startOffset;
-  const startDate: string = formatDate(
+  const startDate: string = formatDateForIcs(
     new Date(startDateEpoch),
     event.isWholeDayEvent
   );
-  const endDate: string = formatDate(
+  const endDate: string = formatDateForIcs(
     new Date(startDateEpoch + event.duration),
     event.isWholeDayEvent
   );

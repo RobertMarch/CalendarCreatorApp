@@ -11,7 +11,7 @@ export function StyledButton({
 }: StyledButtonProps) {
   return (
     <button
-      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-4 rounded disabled:bg-gray-50 disabled:border-gray-200 disabled:text-gray-500 cursor-pointer disabled:cursor-auto"
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-4 rounded disabled:bg-gray-50 disabled:border-gray-200 disabled:text-gray-500 cursor-pointer disabled:cursor-auto"
       disabled={disabled}
       onClick={onClick}
     >
@@ -34,14 +34,16 @@ export function StyledInput({
   type = "text",
 }: StyledInputProps) {
   return (
-    <label>
+    <label className="w-128 flex flex-row justify-between">
       {label}:
-      <input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        type={type}
-        className="border rounded border-gray-400 ml-2 px-1"
-      ></input>
+      <div className="w-90">
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          type={type}
+          className="border rounded border-gray-400 ml-2 px-1"
+        ></input>
+      </div>
     </label>
   );
 }

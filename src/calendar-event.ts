@@ -55,7 +55,7 @@ function deserialiseEvent(json: any): CalendarEvent {
 export function newCalendarEvent(): CalendarEvent {
   return {
     eventId: uuidv4(),
-    startOffset: 0,
+    startOffset: 9 * MILLIS_IN_ONE_HOUR,
     duration: MILLIS_IN_ONE_HOUR,
     isWholeDayEvent: false,
     summary: "",

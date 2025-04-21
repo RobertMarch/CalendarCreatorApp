@@ -1,6 +1,6 @@
 import { BatchConfig, generateIcsFromConfig } from "./calendar-batch-config";
 import { CalendarEvent, deserialiseEvents } from "./calendar-event";
-import { formatDate } from "./date-utils";
+import { formatDateForIcs } from "./date-utils";
 
 export function readEventsFromJson(file: Blob): Promise<CalendarEvent[]> {
   return new Promise((resolve, reject) => {
@@ -29,7 +29,7 @@ export function downloadCalendarAsIcs(
   const blob = new Blob([generateIcsFromConfig(calendarConfig, events)], {
     type: "data:text/plain;charset=utf-8,",
   });
-  const fileName = `calendar_${calendarConfig.batchName}_${formatDate(
+  const fileName = `calendar_${calendarConfig.batchName}_${formatDateForIcs(
     calendarConfig.startDate!,
     true
   )}.ics`;

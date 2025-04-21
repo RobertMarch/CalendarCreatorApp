@@ -1,3 +1,4 @@
+import { BatchConfig } from "./calendar-batch-config";
 import { CalendarEvent, newCalendarEvent } from "./calendar-event";
 import {
   formatTimeAsDuration,
@@ -10,9 +11,14 @@ import { StyledButton, StyledInput } from "./StyledComponents";
 type EventsEditorProps = {
   events: CalendarEvent[];
   setEvents: (newEvents: CalendarEvent[]) => void;
+  batchConfig: BatchConfig;
 };
 
-export function EventsEditor({ events, setEvents }: EventsEditorProps) {
+export function EventsEditor({
+  events,
+  setEvents,
+  batchConfig,
+}: EventsEditorProps) {
   function handleAddEvent(): void {
     const nextEvents: CalendarEvent[] = events.slice();
     nextEvents.push(newCalendarEvent());
@@ -51,6 +57,7 @@ export function EventsEditor({ events, setEvents }: EventsEditorProps) {
         calendarEvent={event}
         updateEvent={updateEvent}
         deleteEvent={deleteEvent}
+        batchConfig={batchConfig}
       ></EventInput>
     );
   });
@@ -76,12 +83,14 @@ type EventInputProps = {
   calendarEvent: CalendarEvent;
   updateEvent: (event: CalendarEvent) => void;
   deleteEvent: (event: CalendarEvent) => void;
+  batchConfig: BatchConfig;
 };
 
 function EventInput({
   calendarEvent,
   updateEvent,
   deleteEvent,
+  batchConfig,
 }: EventInputProps) {
   function setValue(newValue: any, propertyName: keyof CalendarEvent): void {
     const updatedEvent: CalendarEvent = {
@@ -105,6 +114,18 @@ function EventInput({
     }
 
     updateEvent(updatedEvent);
+  }
+
+  let startDateDisplayString;
+  if (batchConfig?.startDate) {
+    const startDateInBatch = new Date(
+      batchConfig.startDate!.getTime() + calendarEvent.startOffset
+    );
+    startDateDisplayString = calendarEvent.isWholeDayEvent
+      ? startDateInBatch.toDateString()
+      : startDateInBatch.toUTCString();
+  } else {
+    startDateDisplayString = "Please set a batch start date to see start time";
   }
 
   return (
@@ -137,10 +158,16 @@ function EventInput({
         setDuration={(duration) => setValue(duration, "duration")}
       ></DurationInput>
 
-      <StyledButton
-        displayText="Delete event"
-        onClick={() => deleteEvent(calendarEvent)}
-      ></StyledButton>
+      <p>
+        Based on the batch start date, this event will start at:{" "}
+        {startDateDisplayString}
+      </p>
+      <div>
+        <StyledButton
+          displayText="Delete event"
+          onClick={() => deleteEvent(calendarEvent)}
+        ></StyledButton>
+      </div>
     </div>
   );
 }
