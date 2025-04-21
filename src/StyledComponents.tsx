@@ -19,3 +19,29 @@ export function StyledButton({
     </button>
   );
 }
+
+type StyledInputProps = {
+  label: string;
+  value: any;
+  setValue: (value: any) => void;
+  type?: "text" | "date";
+};
+
+export function StyledInput({
+  label,
+  value,
+  setValue,
+  type = "text",
+}: StyledInputProps) {
+  return (
+    <label>
+      {label}:
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        type={type}
+        className="border rounded border-gray-400 ml-2 px-1"
+      ></input>
+    </label>
+  );
+}
