@@ -1,5 +1,4 @@
-import { CalendarBatchConfig } from "./calendar-batch-config";
-import { formatDate } from "./date-utils";
+import { v4 as uuidv4 } from "uuid";
 
 export interface CalendarEvent {
   eventId: string;
@@ -7,39 +6,28 @@ export interface CalendarEvent {
   duration: number;
   isWholeDayEvent: boolean;
   summary: string;
-  description?: string;
+  description: string;
 }
 
-export function generateIcsForCalendarEvent(
-  event: CalendarEvent,
-  calendarConfig: CalendarBatchConfig
-): string[] {
-  const startDateEpoch = calendarConfig.startDate.getTime() + event.startOffset;
-  const startDate: string = formatDate(
-    new Date(startDateEpoch),
-    event.isWholeDayEvent
-  );
-  const endDate: string = formatDate(
-    new Date(startDateEpoch + event.duration),
-    event.isWholeDayEvent
-  );
-
-  const eventId = `${calendarConfig.batchName}-${event.summary}_${startDate}-${endDate}`;
-  const lines = [
-    "BEGIN:VEVENT",
-    `DTSTART${event.isWholeDayEvent ? ";VALUE=DATE" : ""}:${startDate}`,
-    `DTEND${event.isWholeDayEvent ? ";VALUE=DATE" : ""}:${endDate}`,
-    "STATUS:CONFIRMED",
-    `TRANSP:${event.isWholeDayEvent ? "TRANSPARENT" : "OPAQUE"}`,
-    `SUMMARY:${calendarConfig.batchName} ${event.summary}`,
-    `UID:${eventId}`,
-  ];
-
-  if (!!event.description) {
-    lines.push(`DESCRIPTION:${event.description}`);
+export function deserialiseEvents(jsonString: string | null): CalendarEvent[] {
+  if (!jsonString) {
+    return [];
   }
 
-  lines.push("END:VEVENT");
+  const events: CalendarEvent[] = JSON.parse(jsonString).map((json: any) =>
+    deserialiseEvent(json)
+  );
 
-  return lines;
+  return events;
+}
+
+function deserialiseEvent(json: any): CalendarEvent {
+  return {
+    eventId: json.eventId || uuidv4(),
+    startOffset: json.startOffset || 0,
+    duration: json.duration || 60 * 60 * 1000,
+    isWholeDayEvent: json.isWholeDayEvent || false,
+    summary: json.summary || "",
+    description: json.description || "",
+  };
 }

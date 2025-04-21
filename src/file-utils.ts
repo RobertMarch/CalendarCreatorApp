@@ -1,9 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import {
-  CalendarBatchConfig,
-  generateIcsFromConfig,
-} from "./calendar-batch-config";
-import { CalendarEvent } from "./calendar-event";
+import { BatchConfig, generateIcsFromConfig } from "./calendar-batch-config";
+import { CalendarEvent, deserialiseEvents } from "./calendar-event";
 import { formatDate } from "./date-utils";
 
 export function readEventsFromJson(file: Blob): Promise<CalendarEvent[]> {
@@ -11,20 +7,7 @@ export function readEventsFromJson(file: Blob): Promise<CalendarEvent[]> {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
       if (e.target) {
-        const results: any[] = JSON.parse(e.target.result as string);
-
-        const events: CalendarEvent[] = results.map((json: any) => {
-          return {
-            eventId: json.eventId || uuidv4(),
-            startOffset: json.startOffset,
-            duration: json.duration,
-            isWholeDayEvent: json.isWholeDayEvent,
-            summary: json.summary,
-            description: json.description,
-          };
-        });
-
-        resolve(events);
+        resolve(deserialiseEvents(e.target.result as string));
       }
     };
     fileReader.onerror = (error) => reject(error);
@@ -40,14 +23,14 @@ export function downloadEventsAsJson(config: CalendarEvent[]): void {
 }
 
 export function downloadCalendarAsIcs(
-  events: CalendarEvent[],
-  calendarConfig: CalendarBatchConfig
+  calendarConfig: BatchConfig,
+  events: CalendarEvent[]
 ): void {
   const blob = new Blob([generateIcsFromConfig(calendarConfig, events)], {
     type: "data:text/plain;charset=utf-8,",
   });
   const fileName = `calendar_${calendarConfig.batchName}_${formatDate(
-    calendarConfig.startDate,
+    calendarConfig.startDate!,
     true
   )}.ics`;
   downloadFile(blob, fileName);

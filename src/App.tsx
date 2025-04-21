@@ -1,102 +1,49 @@
-import { useRef, useState } from "react";
-import { CalendarBatchConfig } from "./calendar-batch-config";
+import { PropsWithChildren, useState } from "react";
+import { BatchConfigInput } from "./BatchConfigInput";
+import { BatchConfig } from "./calendar-batch-config";
 import { CalendarEvent } from "./calendar-event";
-import {
-  downloadCalendarAsIcs,
-  downloadEventsAsJson,
-  readEventsFromJson,
-} from "./file-utils";
+import { EventsEditor } from "./EventsEditor";
+import { FileButtons } from "./FileButtons";
 
 function App() {
-  const [eventConfig, setEventConfig] = useState<CalendarEvent[]>([]);
-  const [calendarConfig, setCalendarConfig] = useState<CalendarBatchConfig>({
-    batchName: "Test batch",
-    startDate: new Date("2025 04 14"),
-  });
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const onFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) {
-      return;
-    }
-    const parsedData: CalendarEvent[] = await readEventsFromJson(
-      event.target.files[0]
-    );
-    setEventConfig(parsedData);
-  };
-
-  const events = eventConfig.map((event) => {
-    return <CalEvent calendarEvent={event} key={event.eventId}></CalEvent>;
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [batchConfig, setBatchConfig] = useState<BatchConfig>({
+    batchName: "",
+    startDate: undefined,
   });
 
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Calendar creator</h1>
-      <input
-        hidden
-        type="file"
-        accept=".json,application/json"
-        onChange={onFileUpload}
-        ref={fileInputRef}
-      ></input>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={() => fileInputRef.current!.click()}
-      >
-        Import from json
-      </button>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        disabled={!calendarConfig}
-        onClick={() => downloadCalendarAsIcs(eventConfig, calendarConfig!)}
-      >
-        Export to ics file
-      </button>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        disabled={!calendarConfig || eventConfig.length == 0}
-        onClick={() => downloadEventsAsJson(eventConfig)}
-      >
-        Export config to json
-      </button>
-      <CalBatchConfig calendarBatchConfig={calendarConfig}></CalBatchConfig>
-      {events}
+      <div className="flex flex-col justify-around h-full space-y-4 p-8 bg-linear-to-r from-sky-200 to-teal-100">
+        <h1 className="text-3xl font-bold">Calendar creator</h1>
+        <p>
+          Create a ics calendar file to import into a calendar based on provided
+          config, useful for when you have batches of events that are repeated
+          on an irregular basis.
+        </p>
+        <Card>
+          <FileButtons
+            batchConfig={batchConfig}
+            events={events}
+            setEvents={setEvents}
+          ></FileButtons>
+        </Card>
+        <Card>
+          <BatchConfigInput
+            batchConfig={batchConfig}
+            setBatchConfig={setBatchConfig}
+          ></BatchConfigInput>
+        </Card>
+        <Card>
+          <EventsEditor events={events} setEvents={setEvents}></EventsEditor>
+        </Card>
+      </div>
     </>
   );
 }
 
-type CalendarBatchConfigProps = {
-  calendarBatchConfig: CalendarBatchConfig;
-};
-
-function CalBatchConfig({ calendarBatchConfig }: CalendarBatchConfigProps) {
-  return (
-    <div>
-      <p>
-        Batch name:
-        {calendarBatchConfig.batchName}
-      </p>
-      <p>
-        Start date:
-        {calendarBatchConfig.startDate.toDateString()}
-      </p>
-    </div>
-  );
-}
-
-type CalendarEventProps = { calendarEvent: CalendarEvent };
-
-function CalEvent({ calendarEvent }: CalendarEventProps) {
-  return (
-    <div>
-      <p>Event</p>
-      <p>{calendarEvent.startOffset}</p>
-      <p>{calendarEvent.duration}</p>
-      <p>{calendarEvent.isWholeDayEvent}</p>
-      <p>{calendarEvent.summary}</p>
-      <p>{calendarEvent.description}</p>
-    </div>
-  );
+function Card({ children }: PropsWithChildren) {
+  return <div className="p-4 bg-white rounded-lg space-y-2">{children}</div>;
 }
 
 export default App;
