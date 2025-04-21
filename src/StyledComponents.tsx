@@ -23,8 +23,8 @@ export function StyledButton({
 type StyledInputProps = {
   label: string;
   value: any;
-  setValue: (value: any) => void;
-  type?: "text" | "date";
+  setValue: (value: string) => void;
+  type?: "text" | "date" | "time" | "number";
 };
 
 export function StyledInput({

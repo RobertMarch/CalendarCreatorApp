@@ -43,9 +43,7 @@ export function FileButtons({ batchConfig, events, setEvents }: ButtonsProps) {
       <StyledButton
         displayText="Export to ics file"
         onClick={() => downloadCalendarAsIcs(batchConfig, events)}
-        disabled={
-          !events?.length || !batchConfig?.batchName || !batchConfig?.startDate
-        }
+        disabled={!events?.length || !batchConfig?.startDate}
       ></StyledButton>
       <StyledButton
         displayText="Export config to json"
