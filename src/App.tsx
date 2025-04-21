@@ -1,12 +1,12 @@
 import { PropsWithChildren, useState } from "react";
 import { BatchConfigInput } from "./BatchConfigInput";
 import { BatchConfig } from "./calendar-batch-config";
-import { CalendarEvent } from "./calendar-event";
+import { useEvents } from "./calendar-event";
 import { EventsEditor } from "./EventsEditor";
 import { FileButtons } from "./FileButtons";
 
 function App() {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const { events, setEvents } = useEvents();
   const [batchConfig, setBatchConfig] = useState<BatchConfig>({
     batchName: "",
     startDate: undefined,

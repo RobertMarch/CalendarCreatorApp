@@ -1,5 +1,24 @@
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { MILLIS_IN_ONE_HOUR } from "./date-utils";
+
+export function useEvents() {
+  const cachedEvents: CalendarEvent[] = deserialiseEvents(
+    localStorage.getItem("events")
+  );
+
+  const [events, setEvents] = useState<CalendarEvent[]>(cachedEvents);
+
+  const saveEvents = (newEvents: CalendarEvent[]) => {
+    localStorage.setItem("events", JSON.stringify(newEvents));
+    setEvents(newEvents);
+  };
+
+  return {
+    events,
+    setEvents: saveEvents,
+  };
+}
 
 export interface CalendarEvent {
   eventId: string;
