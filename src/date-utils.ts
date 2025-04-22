@@ -13,7 +13,13 @@ export function formatDateForIcs(date: Date, isDateOnly: boolean): string {
 }
 
 export function formatDateForInput(date?: Date): string | null {
-  return !!date ? date.toISOString().split("T")[0] : "";
+  return !!date ? format(date, "yyyy-MM-dd", { in: utc }) : "";
+}
+
+export function formatDateForDisplay(date: Date, isDateOnly: boolean): string {
+  return isDateOnly
+    ? format(date, "EEE dd MMM yyyy", { in: utc })
+    : format(date, "EEE dd MMM yyyy HH:mm", { in: utc });
 }
 
 export function formatTimestampAsDays(timestamp: number): number {

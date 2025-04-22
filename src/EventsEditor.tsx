@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { BatchConfig } from "./calendar-batch-config";
 import { CalendarEvent, newCalendarEvent } from "./calendar-event";
 import {
+  formatDateForDisplay,
   formatTimeAsDuration,
   formatTimestampAsDays,
   formatTimestampAsTime,
@@ -19,6 +21,8 @@ export function EventsEditor({
   setEvents,
   batchConfig,
 }: EventsEditorProps) {
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState<boolean>(false);
+
   function handleAddEvent(): void {
     const nextEvents: CalendarEvent[] = events.slice();
     nextEvents.push(newCalendarEvent());
@@ -30,6 +34,15 @@ export function EventsEditor({
       .slice()
       .sort((a, b) => a.startOffset - b.startOffset);
     setEvents(nextEvents);
+  }
+
+  function deleteAllEvents(): void {
+    if (confirmDeleteAll) {
+      setEvents([]);
+    } else {
+      setTimeout(() => setConfirmDeleteAll(false), 4000);
+    }
+    setConfirmDeleteAll(!confirmDeleteAll);
   }
 
   function updateEvent(nextEvent: CalendarEvent): void {
@@ -72,6 +85,14 @@ export function EventsEditor({
         displayText="Sort events"
         onClick={sortEvents}
         disabled={!events.length}
+      ></StyledButton>
+      <StyledButton
+        displayText={
+          confirmDeleteAll ? "Confirm delete all events" : "Delete all events"
+        }
+        onClick={deleteAllEvents}
+        disabled={!events.length}
+        colour="red"
       ></StyledButton>
 
       {eventInputs}
@@ -121,11 +142,12 @@ function EventInput({
     const startDateInBatch = new Date(
       batchConfig.startDate!.getTime() + calendarEvent.startOffset
     );
-    startDateDisplayString = calendarEvent.isWholeDayEvent
-      ? startDateInBatch.toDateString()
-      : startDateInBatch.toUTCString();
+
+    startDateDisplayString =
+      "In this batch, the event will start at: " +
+      formatDateForDisplay(startDateInBatch, calendarEvent.isWholeDayEvent);
   } else {
-    startDateDisplayString = "Please set a batch start date to see start time";
+    startDateDisplayString = "Please set a batch start date to see start time.";
   }
 
   return (
@@ -140,14 +162,16 @@ function EventInput({
         value={calendarEvent.description}
         setValue={(val) => setValue(val, "description")}
       ></StyledInput>
-      <label>
+      <label className="w-128 flex flex-row justify-between">
         Whole day event:
-        <input
-          type="checkbox"
-          checked={calendarEvent.isWholeDayEvent}
-          onChange={(e) => setWholeDayEvent(e.target.checked)}
-          className="ml-2"
-        ></input>
+        <div className="w-90">
+          <input
+            type="checkbox"
+            checked={calendarEvent.isWholeDayEvent}
+            onChange={(e) => setWholeDayEvent(e.target.checked)}
+            className="ml-2"
+          ></input>
+        </div>
       </label>
       <StartTimeInput
         calendarEvent={calendarEvent}
@@ -158,10 +182,7 @@ function EventInput({
         setDuration={(duration) => setValue(duration, "duration")}
       ></DurationInput>
 
-      <p>
-        Based on the batch start date, this event will start at:{" "}
-        {startDateDisplayString}
-      </p>
+      <p>{startDateDisplayString}</p>
       <div>
         <StyledButton
           displayText="Delete event"

@@ -37,16 +37,16 @@ export function FileButtons({ batchConfig, events, setEvents }: ButtonsProps) {
         ref={fileInputRef}
       ></input>
       <StyledButton
-        displayText="Import from json"
+        displayText="Import config from file"
         onClick={() => fileInputRef.current!.click()}
       ></StyledButton>
       <StyledButton
-        displayText="Export to ics file"
+        displayText="Export to ics calendar"
         onClick={() => downloadCalendarAsIcs(batchConfig, events)}
         disabled={!events?.length || !batchConfig?.startDate}
       ></StyledButton>
       <StyledButton
-        displayText="Export config to json"
+        displayText="Export config to file"
         onClick={() => downloadEventsAsJson(events)}
         disabled={!events?.length}
       ></StyledButton>

@@ -20,7 +20,7 @@ export function BatchConfigInput({
   }
 
   return (
-    <div className="flex flex-row space-between space-x-6">
+    <div className="flex flex-col space-between space-y-2">
       <StyledInput
         label="Start date"
         value={formatDateForInput(batchConfig.startDate)}
