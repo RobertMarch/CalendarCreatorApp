@@ -36,7 +36,9 @@ function deserialiseBatchConfig(jsonString: string | null): BatchConfig {
   const jsonObj: any = JSON.parse(jsonString);
 
   return {
-    startDate: new Date(jsonObj.startDate) || undefined,
+    startDate:
+      (jsonObj.startDate ? new Date(jsonObj.startDate) : undefined) ||
+      undefined,
     batchName: jsonObj.batchName || "",
     templateName: jsonObj.templateName || "",
   };

@@ -9,6 +9,7 @@ export interface CalendarEvent {
   isWholeDayEvent: boolean;
   summary: string;
   description: string;
+  included: boolean;
 }
 
 export function useEvents() {
@@ -49,6 +50,7 @@ export function deserialiseEvent(json: any): CalendarEvent {
     isWholeDayEvent: json.isWholeDayEvent || false,
     summary: json.summary || "",
     description: json.description || "",
+    included: json.included != false,
   };
 }
 
@@ -60,5 +62,6 @@ export function newCalendarEvent(): CalendarEvent {
     isWholeDayEvent: false,
     summary: "",
     description: "",
+    included: true
   };
 }

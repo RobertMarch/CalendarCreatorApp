@@ -14,9 +14,11 @@ export function generateIcsFromConfig(
     "",
   ];
 
-  events.forEach((event: CalendarEvent) => {
-    lines.push(...generateIcsForCalendarEvent(calendarConfig, event));
-  });
+  events
+    .filter((e) => e.included)
+    .forEach((event: CalendarEvent) => {
+      lines.push(...generateIcsForCalendarEvent(calendarConfig, event));
+    });
 
   lines.push("END:VCALENDAR");
 

@@ -41,7 +41,7 @@ export function downloadCalendarAsIcs(
   const blob = new Blob([generateIcsFromConfig(calendarConfig, events)], {
     type: "data:text/plain;charset=utf-8,",
   });
-  const fileName = `calendar_${calendarConfig.batchName}_${formatDateForIcs(
+  const fileName = `calendar_${calendarConfig.templateName}_${calendarConfig.batchName}_${formatDateForIcs(
     calendarConfig.startDate!,
     true
   )}.ics`;
@@ -64,5 +64,5 @@ function downloadFile(fileBlob: Blob, fileName: string): void {
 }
 
 function escapeFileName(stringToEscape: string): string {
-  return stringToEscape.replace(/r([^a-z0-9 ]+)/gi, "_");
+  return stringToEscape.replace(/([^a-z0-9 .-_()]+)/gi, "_");
 }

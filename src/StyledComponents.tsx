@@ -35,6 +35,17 @@ type StyledInputProps = {
   value: any;
   setValue: (value: string) => void;
   type?: "text" | "date" | "time" | "number";
+  flexDirection?: "row" | "col";
+};
+
+const InputTypeToLabelWidths: Record<
+  "text" | "date" | "time" | "number",
+  string
+> = {
+  text: "w-128",
+  date: "w-min",
+  time: "w-min",
+  number: "w-16",
 };
 
 export function StyledInput({
@@ -42,18 +53,22 @@ export function StyledInput({
   value,
   setValue,
   type = "text",
+  flexDirection = "row",
 }: StyledInputProps) {
+  const labelClasses: string =
+    flexDirection == "col" ? "w-max flex-col" : "w-min flex-row";
+  const labelTextDivClass: string = flexDirection == "col" ? "w-max" : "w-36";
+  const inputWidth: string = InputTypeToLabelWidths[type];
+
   return (
-    <label className="w-128 flex flex-row justify-between">
-      {label}:
-      <div className="w-90">
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          type={type}
-          className="border rounded border-gray-400 ml-2 px-1"
-        ></input>
-      </div>
+    <label className={labelClasses + " flex justify-between"}>
+      <div className={labelTextDivClass}>{label}:</div>
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        type={type}
+        className={inputWidth + " border rounded border-gray-400 px-1"}
+      ></input>
     </label>
   );
 }

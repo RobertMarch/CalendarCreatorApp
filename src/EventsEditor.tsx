@@ -22,6 +22,7 @@ export function EventsEditor({
   batchConfig,
 }: EventsEditorProps) {
   const [confirmDeleteAll, setConfirmDeleteAll] = useState<boolean>(false);
+  const [showDescriptions, setShowDescriptions] = useState<boolean>(false);
 
   function handleAddEvent(): void {
     const nextEvents: CalendarEvent[] = events.slice();
@@ -71,29 +72,43 @@ export function EventsEditor({
         updateEvent={updateEvent}
         deleteEvent={deleteEvent}
         batchConfig={batchConfig}
+        showDescription={showDescriptions}
       ></EventInput>
     );
   });
 
   return (
     <>
-      <StyledButton
-        displayText="Add event"
-        onClick={handleAddEvent}
-      ></StyledButton>
-      <StyledButton
-        displayText="Sort events"
-        onClick={sortEvents}
-        disabled={!events.length}
-      ></StyledButton>
-      <StyledButton
-        displayText={
-          confirmDeleteAll ? "Confirm delete all events" : "Delete all events"
-        }
-        onClick={deleteAllEvents}
-        disabled={!events.length}
-        colour="red"
-      ></StyledButton>
+      <div className="flex flex-row">
+        <StyledButton
+          displayText="Add event"
+          onClick={handleAddEvent}
+        ></StyledButton>
+        <StyledButton
+          displayText="Sort events"
+          onClick={sortEvents}
+          disabled={!events.length}
+        ></StyledButton>
+        <StyledButton
+          displayText={
+            confirmDeleteAll ? "Confirm delete all events" : "Delete all events"
+          }
+          onClick={deleteAllEvents}
+          disabled={!events.length}
+          colour="red"
+        ></StyledButton>
+
+        <div className="content-center">
+          <label className="w-max flex flex-row justify-between">
+            <input
+              type="checkbox"
+              checked={showDescriptions}
+              onChange={(e) => setShowDescriptions(e.target.checked)}
+            ></input>
+            <div className="pl-2">Show event descriptions</div>
+          </label>
+        </div>
+      </div>
 
       {eventInputs}
     </>
@@ -105,6 +120,7 @@ type EventInputProps = {
   updateEvent: (event: CalendarEvent) => void;
   deleteEvent: (event: CalendarEvent) => void;
   batchConfig: BatchConfig;
+  showDescription: boolean;
 };
 
 function EventInput({
@@ -112,6 +128,7 @@ function EventInput({
   updateEvent,
   deleteEvent,
   batchConfig,
+  showDescription,
 }: EventInputProps) {
   function setValue(newValue: any, propertyName: keyof CalendarEvent): void {
     const updatedEvent: CalendarEvent = {
@@ -137,57 +154,55 @@ function EventInput({
     updateEvent(updatedEvent);
   }
 
-  let startDateDisplayString;
-  if (batchConfig?.startDate) {
-    const startDateInBatch = new Date(
-      batchConfig.startDate!.getTime() + calendarEvent.startOffset
-    );
-
-    startDateDisplayString =
-      "In this batch, the event will start at: " +
-      formatDateForDisplay(startDateInBatch, calendarEvent.isWholeDayEvent);
-  } else {
-    startDateDisplayString = "Please set a batch start date to see start time.";
-  }
-
   return (
-    <div className="border-b border-gray-400 py-4 flex flex-col space-between space-y-1">
-      <StyledInput
-        label="Event title"
-        value={calendarEvent.summary}
-        setValue={(val) => setValue(val, "summary")}
-      ></StyledInput>
-      <StyledInput
-        label="Description"
-        value={calendarEvent.description}
-        setValue={(val) => setValue(val, "description")}
-      ></StyledInput>
-      <label className="w-128 flex flex-row justify-between">
-        Whole day event:
-        <div className="w-90">
+    <div className="flex flex-row border-b border-gray-400 py-4">
+      <div className="border-r border-gray-400 pr-2 mr-2">
+        <label className="w-max flex flex-row justify-between pb-4">
+          <input
+            type="checkbox"
+            checked={calendarEvent.included}
+            onChange={(e) => setValue(e.target.checked, "included")}
+          ></input>
+          <div className="pl-2">Include</div>
+        </label>
+        <StyledButton
+          displayText="Delete"
+          onClick={() => deleteEvent(calendarEvent)}
+          colour="red"
+        ></StyledButton>
+      </div>
+      <div className="flex flex-col space-between space-y-1">
+        <StyledInput
+          label="Event title"
+          value={calendarEvent.summary}
+          setValue={(val) => setValue(val, "summary")}
+        ></StyledInput>
+        {showDescription ? (
+          <StyledInput
+            label="Description"
+            value={calendarEvent.description}
+            setValue={(val) => setValue(val, "description")}
+          ></StyledInput>
+        ) : (
+          <></>
+        )}
+        <label className="w-min flex flex-row justify-between">
+          <div className="w-36">Whole day event:</div>
           <input
             type="checkbox"
             checked={calendarEvent.isWholeDayEvent}
             onChange={(e) => setWholeDayEvent(e.target.checked)}
-            className="ml-2"
           ></input>
-        </div>
-      </label>
-      <StartTimeInput
-        calendarEvent={calendarEvent}
-        setStartOffset={(startOffset) => setValue(startOffset, "startOffset")}
-      ></StartTimeInput>
-      <DurationInput
-        calendarEvent={calendarEvent}
-        setDuration={(duration) => setValue(duration, "duration")}
-      ></DurationInput>
-
-      <p>{startDateDisplayString}</p>
-      <div>
-        <StyledButton
-          displayText="Delete event"
-          onClick={() => deleteEvent(calendarEvent)}
-        ></StyledButton>
+        </label>
+        <StartTimeInput
+          calendarEvent={calendarEvent}
+          batchStartDate={batchConfig.startDate}
+          setStartOffset={(startOffset) => setValue(startOffset, "startOffset")}
+        ></StartTimeInput>
+        <DurationInput
+          calendarEvent={calendarEvent}
+          setDuration={(duration) => setValue(duration, "duration")}
+        ></DurationInput>
       </div>
     </div>
   );
@@ -195,11 +210,13 @@ function EventInput({
 
 type StartTimeInputProps = {
   calendarEvent: CalendarEvent;
+  batchStartDate: Date | undefined;
   setStartOffset: (nextStartOffset: number) => void;
 };
 
 function StartTimeInput({
   calendarEvent,
+  batchStartDate,
   setStartOffset,
 }: StartTimeInputProps) {
   const startOffsetParts = {
@@ -247,32 +264,52 @@ function StartTimeInput({
     setStartOffset(startOffsetAsEpochTimestamp);
   }
 
+  let startDateDisplayString;
+  if (batchStartDate) {
+    const startDateInBatch = new Date(
+      batchStartDate!.getTime() + calendarEvent.startOffset
+    );
+
+    startDateDisplayString = formatDateForDisplay(
+      startDateInBatch,
+      calendarEvent.isWholeDayEvent
+    );
+  } else {
+    startDateDisplayString = "Set a batch start date to see event start time.";
+  }
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-row">
       Start offset:
-      <div className="flex flex-col pl-4">
-        <StyledInput
-          label="Weeks"
-          value={startOffsetParts.weeks}
-          setValue={(val) => setStartOffsetPart(val, "weeks")}
-          type="number"
-        ></StyledInput>
-        <StyledInput
-          label="Days"
-          value={startOffsetParts.days}
-          setValue={(val) => setStartOffsetPart(val, "days")}
-          type="number"
-        ></StyledInput>
-        {calendarEvent.isWholeDayEvent ? (
-          <></>
-        ) : (
+      <div className="flex flex-col pl-6">
+        <div className="flex flex-row space-between space-x-4">
           <StyledInput
-            label="Time (hh:mm)"
-            value={startOffsetParts.time}
-            setValue={(val) => setStartOffsetPart(val, "time")}
-            type="time"
+            label="Weeks"
+            value={startOffsetParts.weeks}
+            setValue={(val) => setStartOffsetPart(val, "weeks")}
+            type="number"
+            flexDirection="col"
           ></StyledInput>
-        )}
+          <StyledInput
+            label="Days"
+            value={startOffsetParts.days}
+            setValue={(val) => setStartOffsetPart(val, "days")}
+            type="number"
+            flexDirection="col"
+          ></StyledInput>
+          {calendarEvent.isWholeDayEvent ? (
+            <></>
+          ) : (
+            <StyledInput
+              label="Time (hh:mm)"
+              value={startOffsetParts.time}
+              setValue={(val) => setStartOffsetPart(val, "time")}
+              type="time"
+              flexDirection="col"
+            ></StyledInput>
+          )}
+        </div>
+        <p>{startDateDisplayString}</p>
       </div>
     </div>
   );
