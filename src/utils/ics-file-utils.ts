@@ -1,10 +1,6 @@
-import { CalendarEvent } from "./calendar-event";
+import { BatchConfig } from "../types/calendar-batch-config";
+import { CalendarEvent } from "../types/calendar-event";
 import { formatDateForIcs } from "./date-utils";
-
-export interface BatchConfig {
-  startDate?: Date;
-  batchName: string;
-}
 
 export function generateIcsFromConfig(
   calendarConfig: BatchConfig,
@@ -42,7 +38,7 @@ function generateIcsForCalendarEvent(
     event.isWholeDayEvent
   );
 
-  const eventId = `${calendarConfig.batchName}-${event.summary}_${startDate}-${endDate}`;
+  const eventId = `${calendarConfig.templateName}-${calendarConfig.batchName}-${event.summary}_${startDate}-${endDate}`;
   const lines = [
     "BEGIN:VEVENT",
     `DTSTART${event.isWholeDayEvent ? ";VALUE=DATE" : ""}:${startDate}`,

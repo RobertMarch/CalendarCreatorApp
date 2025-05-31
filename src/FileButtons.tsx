@@ -1,30 +1,42 @@
 import { useRef } from "react";
-import { BatchConfig } from "./calendar-batch-config";
-import { CalendarEvent } from "./calendar-event";
+import { StyledButton } from "./StyledComponents";
+import { BatchConfig } from "./types/calendar-batch-config";
+import { CalendarEvent } from "./types/calendar-event";
+import { CalendarTemplate } from "./types/calendar-template";
 import {
   downloadCalendarAsIcs,
   downloadEventsAsJson,
-  readEventsFromJson,
-} from "./file-utils";
-import { StyledButton } from "./StyledComponents";
+  readTemplateFromJson,
+} from "./utils/file-utils";
 
 type ButtonsProps = {
   batchConfig: BatchConfig;
+  setBatchConfig: (newBatchConfig: BatchConfig) => void;
   events: CalendarEvent[];
   setEvents: (newEvents: CalendarEvent[]) => void;
 };
 
-export function FileButtons({ batchConfig, events, setEvents }: ButtonsProps) {
+export function FileButtons({
+  batchConfig,
+  setBatchConfig,
+  events,
+  setEvents,
+}: ButtonsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) {
       return;
     }
-    const parsedData: CalendarEvent[] = await readEventsFromJson(
+    const parsedData: CalendarTemplate = await readTemplateFromJson(
       event.target.files[0]
     );
-    setEvents(parsedData);
+    setEvents(parsedData.events);
+    setBatchConfig({
+      startDate: undefined,
+      batchName: "",
+      templateName: parsedData.templateName,
+    });
   };
 
   return (
@@ -37,7 +49,7 @@ export function FileButtons({ batchConfig, events, setEvents }: ButtonsProps) {
         ref={fileInputRef}
       ></input>
       <StyledButton
-        displayText="Import config from file"
+        displayText="Load template from file"
         onClick={() => fileInputRef.current!.click()}
       ></StyledButton>
       <StyledButton
@@ -46,8 +58,8 @@ export function FileButtons({ batchConfig, events, setEvents }: ButtonsProps) {
         disabled={!events?.length || !batchConfig?.startDate}
       ></StyledButton>
       <StyledButton
-        displayText="Export config to file"
-        onClick={() => downloadEventsAsJson(events)}
+        displayText="Save template to file"
+        onClick={() => downloadEventsAsJson(batchConfig, events)}
         disabled={!events?.length}
       ></StyledButton>
     </>

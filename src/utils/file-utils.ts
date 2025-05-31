@@ -1,13 +1,18 @@
-import { BatchConfig, generateIcsFromConfig } from "./calendar-batch-config";
-import { CalendarEvent, deserialiseEvents } from "./calendar-event";
+import { BatchConfig } from "../types/calendar-batch-config";
+import { CalendarEvent } from "../types/calendar-event";
+import {
+  CalendarTemplate,
+  deserialiseTempate,
+} from "../types/calendar-template";
 import { formatDateForIcs } from "./date-utils";
+import { generateIcsFromConfig } from "./ics-file-utils";
 
-export function readEventsFromJson(file: Blob): Promise<CalendarEvent[]> {
+export function readTemplateFromJson(file: Blob): Promise<CalendarTemplate> {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
       if (e.target) {
-        resolve(deserialiseEvents(e.target.result as string));
+        resolve(deserialiseTempate(e.target.result as string));
       }
     };
     fileReader.onerror = (error) => reject(error);
@@ -15,11 +20,18 @@ export function readEventsFromJson(file: Blob): Promise<CalendarEvent[]> {
   });
 }
 
-export function downloadEventsAsJson(config: CalendarEvent[]): void {
-  const blob = new Blob([JSON.stringify(config)], {
+export function downloadEventsAsJson(
+  calendarConfig: BatchConfig,
+  events: CalendarEvent[]
+): void {
+  const template: CalendarTemplate = {
+    templateName: calendarConfig.templateName,
+    events,
+  };
+  const blob = new Blob([JSON.stringify(template)], {
     type: "data:application/json;charset=utf-8,",
   });
-  downloadFile(blob, "event-config.json");
+  downloadFile(blob, `${calendarConfig.templateName} - template.json`);
 }
 
 export function downloadCalendarAsIcs(
@@ -40,7 +52,7 @@ function downloadFile(fileBlob: Blob, fileName: string): void {
   const link = document.createElement("a");
   link.style.display = "none";
   link.href = URL.createObjectURL(fileBlob);
-  link.download = fileName;
+  link.download = escapeFileName(fileName);
 
   document.body.appendChild(link);
   link.click();
@@ -49,4 +61,8 @@ function downloadFile(fileBlob: Blob, fileName: string): void {
     URL.revokeObjectURL(link.href);
     link.remove();
   }, 0);
+}
+
+function escapeFileName(stringToEscape: string): string {
+  return stringToEscape.replace(/r([^a-z0-9 ]+)/gi, "_");
 }

@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { MILLIS_IN_ONE_HOUR } from "./date-utils";
+import { MILLIS_IN_ONE_HOUR } from "../utils/date-utils";
+
+export interface CalendarEvent {
+  eventId: string;
+  startOffset: number;
+  duration: number;
+  isWholeDayEvent: boolean;
+  summary: string;
+  description: string;
+}
 
 export function useEvents() {
   const cachedEvents: CalendarEvent[] = deserialiseEvents(
@@ -20,15 +29,6 @@ export function useEvents() {
   };
 }
 
-export interface CalendarEvent {
-  eventId: string;
-  startOffset: number;
-  duration: number;
-  isWholeDayEvent: boolean;
-  summary: string;
-  description: string;
-}
-
 export function deserialiseEvents(jsonString: string | null): CalendarEvent[] {
   if (!jsonString) {
     return [];
@@ -41,7 +41,7 @@ export function deserialiseEvents(jsonString: string | null): CalendarEvent[] {
   return events;
 }
 
-function deserialiseEvent(json: any): CalendarEvent {
+export function deserialiseEvent(json: any): CalendarEvent {
   return {
     eventId: json.eventId || uuidv4(),
     startOffset: json.startOffset || 0,

@@ -1,16 +1,13 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 import { BatchConfigInput } from "./BatchConfigInput";
-import { BatchConfig } from "./calendar-batch-config";
-import { useEvents } from "./calendar-event";
 import { EventsEditor } from "./EventsEditor";
 import { FileButtons } from "./FileButtons";
+import { useBatchConfig } from "./types/calendar-batch-config";
+import { useEvents } from "./types/calendar-event";
 
 function App() {
   const { events, setEvents } = useEvents();
-  const [batchConfig, setBatchConfig] = useState<BatchConfig>({
-    batchName: "",
-    startDate: undefined,
-  });
+  const { batchConfig, setBatchConfig } = useBatchConfig();
 
   return (
     <>
@@ -19,6 +16,7 @@ function App() {
         <Card>
           <FileButtons
             batchConfig={batchConfig}
+            setBatchConfig={setBatchConfig}
             events={events}
             setEvents={setEvents}
           ></FileButtons>

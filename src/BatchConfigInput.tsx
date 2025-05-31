@@ -1,6 +1,6 @@
-import { BatchConfig } from "./calendar-batch-config";
-import { formatDateForInput } from "./date-utils";
 import { StyledInput } from "./StyledComponents";
+import { BatchConfig } from "./types/calendar-batch-config";
+import { formatDateForInput } from "./utils/date-utils";
 
 type BatchConfigInputProps = {
   batchConfig: BatchConfig;
@@ -31,6 +31,11 @@ export function BatchConfigInput({
         label="Batch name"
         value={batchConfig.batchName}
         setValue={(val) => setProperty(val, "batchName")}
+      ></StyledInput>
+      <StyledInput
+        label="Template name"
+        value={batchConfig.templateName}
+        setValue={(val) => setProperty(val, "templateName")}
       ></StyledInput>
     </div>
   );

@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { BatchConfig } from "./calendar-batch-config";
-import { CalendarEvent, newCalendarEvent } from "./calendar-event";
+import { StyledButton, StyledInput } from "./StyledComponents";
+import { BatchConfig } from "./types/calendar-batch-config";
+import { CalendarEvent, newCalendarEvent } from "./types/calendar-event";
 import {
   formatDateForDisplay,
   formatTimeAsDuration,
   formatTimestampAsDays,
   formatTimestampAsTime,
   MILLIS_IN_ONE_DAY,
-} from "./date-utils";
-import { StyledButton, StyledInput } from "./StyledComponents";
+} from "./utils/date-utils";
 
 type EventsEditorProps = {
   events: CalendarEvent[];
