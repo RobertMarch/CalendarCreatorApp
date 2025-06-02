@@ -62,7 +62,7 @@ export function StyledInput({
 
   return (
     <label className={labelClasses + " flex justify-between"}>
-      <div className={labelTextDivClass}>{label}:</div>
+      <div className={labelTextDivClass + " text-right pr-2"}>{label}:</div>
       <input
         value={value}
         onChange={(e) => setValue(e.target.value)}

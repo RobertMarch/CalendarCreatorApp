@@ -163,7 +163,7 @@ function EventInput({
             checked={calendarEvent.included}
             onChange={(e) => setValue(e.target.checked, "included")}
           ></input>
-          <div className="pl-2">Include</div>
+          <div className="pl-2 w-20">Include in ics export</div>
         </label>
         <StyledButton
           displayText="Delete"
@@ -187,7 +187,7 @@ function EventInput({
           <></>
         )}
         <label className="w-min flex flex-row justify-between">
-          <div className="w-36">Whole day event:</div>
+          <div className="w-36 text-right pr-2">Whole day:</div>
           <input
             type="checkbox"
             checked={calendarEvent.isWholeDayEvent}
@@ -198,11 +198,8 @@ function EventInput({
           calendarEvent={calendarEvent}
           batchStartDate={batchConfig.startDate}
           setStartOffset={(startOffset) => setValue(startOffset, "startOffset")}
-        ></StartTimeInput>
-        <DurationInput
-          calendarEvent={calendarEvent}
           setDuration={(duration) => setValue(duration, "duration")}
-        ></DurationInput>
+        ></StartTimeInput>
       </div>
     </div>
   );
@@ -212,12 +209,14 @@ type StartTimeInputProps = {
   calendarEvent: CalendarEvent;
   batchStartDate: Date | undefined;
   setStartOffset: (nextStartOffset: number) => void;
+  setDuration: (nextDuration: number) => void;
 };
 
 function StartTimeInput({
   calendarEvent,
   batchStartDate,
   setStartOffset,
+  setDuration,
 }: StartTimeInputProps) {
   const startOffsetParts = {
     weeks:
@@ -280,8 +279,8 @@ function StartTimeInput({
 
   return (
     <div className="flex flex-row">
-      Start offset:
-      <div className="flex flex-col pl-6">
+      <div className="w-36 text-right pr-2">Start offset:</div>
+      <div className="flex flex-col">
         <div className="flex flex-row space-between space-x-4">
           <StyledInput
             label="Weeks"
@@ -301,13 +300,17 @@ function StartTimeInput({
             <></>
           ) : (
             <StyledInput
-              label="Time (hh:mm)"
+              label="Time"
               value={startOffsetParts.time}
               setValue={(val) => setStartOffsetPart(val, "time")}
               type="time"
               flexDirection="col"
             ></StyledInput>
           )}
+          <DurationInput
+            calendarEvent={calendarEvent}
+            setDuration={(duration) => setDuration(duration)}
+          ></DurationInput>
         </div>
         <p>{startDateDisplayString}</p>
       </div>
@@ -331,13 +334,15 @@ function DurationInput({ calendarEvent, setDuration }: DurationInputProps) {
         )
       }
       type="number"
+      flexDirection="col"
     ></StyledInput>
   ) : (
     <StyledInput
-      label="Duration (hh:mm)"
+      label="Duration"
       value={formatTimestampAsTime(calendarEvent.duration, false)}
       setValue={(val) => setDuration(Math.max(formatTimeAsDuration(val), 0))}
       type="time"
+      flexDirection="col"
     ></StyledInput>
   );
 }

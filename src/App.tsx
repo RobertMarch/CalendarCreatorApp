@@ -56,11 +56,15 @@ function Footer() {
         an irregular basis. The generated ics calendar file can be imported into
         calendar apps, note that all events are created without using
         timestamps, so events will be created at the specified time, regardless
-        of your time zone.
+        of your time zone. Events can be individually toggled to be included
+        within the generated ICS file using the "Include" option beside each
+        event.
       </p>
       <p>
         The batch name if provided will be added as a prefix to all events in
-        the created calendar.
+        the created calendar. The template name if provided is used when
+        generating the file name when saving the template to file, or exporting
+        to an ICS calendar, for ease of managing multiple sets of templates.
       </p>
       <p>
         This uses local storage in your browser to cache the latest events
