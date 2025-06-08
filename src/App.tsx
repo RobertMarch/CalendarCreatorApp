@@ -28,9 +28,9 @@ function App() {
             setBatchConfig={setBatchConfig}
           ></BatchConfigInput>
         </Card>
-        <div className="flex flex-wrap gap-4 w-full h-[80vh] min-h-[500px]">
-          <div className="flex-1 min-w-[600px] h-full">
-            <Card additionalClasses="h-full overflow-scroll">
+        <div className="flex flex-wrap gap-4 w-full">
+          <div className="flex-1 min-w-[600px]">
+            <Card additionalClasses="h-[80vh] min-h-[500px] overflow-scroll">
               <EventsEditor
                 events={events}
                 setEvents={setEvents}
@@ -38,10 +38,11 @@ function App() {
               ></EventsEditor>
             </Card>
           </div>
-          <div className="flex-1 min-w-[600px] h-full">
-            <Card additionalClasses="h-full overflow-scroll">
+          <div className="flex-1 min-w-[600px]">
+            <Card additionalClasses="h-[80vh] min-h-[500px] overflow-scroll">
               <CalendarView
                 events={events}
+                setEvents={setEvents}
                 batchConfig={batchConfig}
               ></CalendarView>
             </Card>

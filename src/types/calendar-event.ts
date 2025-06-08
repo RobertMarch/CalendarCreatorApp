@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { MILLIS_IN_ONE_HOUR } from "../utils/date-utils";
+import {
+  MILLIS_IN_ONE_DAY,
+  MILLIS_IN_ONE_HOUR,
+  MILLIS_IN_ONE_MINUTE,
+} from "../utils/date-utils";
+import { BatchConfig } from "./calendar-batch-config";
 
 export interface CalendarEvent {
   eventId: string;
@@ -52,6 +57,36 @@ export function deserialiseEvent(json: any): CalendarEvent {
     description: json.description || "",
     included: json.included != false,
   };
+}
+
+export function parseEventFromFullCalendar(
+  fullCalendarEvent: any,
+  batchConfig: BatchConfig,
+  defaultEventOptions?: CalendarEvent
+): CalendarEvent {
+  const startOffset =
+    fullCalendarEvent.start.getTime() -
+    fullCalendarEvent.start.getTimezoneOffset() * MILLIS_IN_ONE_MINUTE -
+    batchConfig.startDate!.getTime();
+  const duration: number = parseFullCalendarDuration(fullCalendarEvent);
+
+  return {
+    eventId: fullCalendarEvent.id || uuidv4(),
+    startOffset: startOffset,
+    duration: duration,
+    isWholeDayEvent: fullCalendarEvent.allDay || false,
+    summary: fullCalendarEvent.title || defaultEventOptions?.summary || "",
+    description:
+      fullCalendarEvent.description || defaultEventOptions?.description || "",
+    included: true,
+  };
+}
+
+function parseFullCalendarDuration(fullCalendarEvent: any): number {
+  if (fullCalendarEvent.end != null) {
+    return fullCalendarEvent.end?.getTime() - fullCalendarEvent.start.getTime();
+  }
+  return fullCalendarEvent.allDay ? MILLIS_IN_ONE_DAY : MILLIS_IN_ONE_HOUR;
 }
 
 export function newCalendarEvent(): CalendarEvent {

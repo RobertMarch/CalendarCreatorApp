@@ -155,7 +155,10 @@ function EventInput({
   }
 
   return (
-    <div className="flex border-b border-gray-400 py-4">
+    <div
+      className="flex border-b border-gray-400 py-4 transition-color duration-200"
+      id={calendarEvent.eventId}
+    >
       <div className="border-r border-gray-400 pr-2 mr-2">
         <label className="w-max flex pb-4">
           <input
