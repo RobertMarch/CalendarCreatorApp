@@ -30,7 +30,7 @@ function App() {
         </Card>
         <div className="flex flex-wrap gap-4 w-full">
           <div className="flex-1 min-w-[600px]">
-            <Card additionalClasses="h-[80vh] min-h-[500px] overflow-scroll">
+            <Card additionalClasses="h-[80vh] min-h-[500px] overflow-hidden flex flex-col">
               <EventsEditor
                 events={events}
                 setEvents={setEvents}

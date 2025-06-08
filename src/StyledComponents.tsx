@@ -42,7 +42,7 @@ const InputTypeToLabelWidths: Record<
   "text" | "date" | "time" | "number",
   string
 > = {
-  text: "max-w-128 flex-1",
+  text: "max-w-160 flex-1",
   date: "w-min",
   time: "w-min",
   number: "w-16",

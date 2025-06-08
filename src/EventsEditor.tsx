@@ -79,7 +79,7 @@ export function EventsEditor({
 
   return (
     <>
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap sticky top-0 bg-white pb-2">
         <StyledButton
           displayText="Add event"
           onClick={handleAddEvent}
@@ -110,7 +110,7 @@ export function EventsEditor({
         </div>
       </div>
 
-      {eventInputs}
+      <div className="flex-1 overflow-scroll pr-2">{eventInputs}</div>
     </>
   );
 }
