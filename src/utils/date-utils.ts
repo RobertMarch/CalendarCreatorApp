@@ -16,19 +16,31 @@ export function formatDateForCalendarView(
   date: Date,
   isDateOnly: boolean
 ): string {
+  if (!isValidDate(date)) {
+    return "";
+  }
   return isDateOnly
     ? format(date, "yyyy-MM-dd", { in: utc })
     : format(date, "yyyy-MM-dd'T'HH:mm:ss", { in: utc });
 }
 
 export function formatDateForInput(date?: Date): string | null {
-  return !!date ? format(date, "yyyy-MM-dd", { in: utc }) : "";
+  return !!date && isValidDate(date)
+    ? format(date, "yyyy-MM-dd", { in: utc })
+    : "";
 }
 
 export function formatDateForDisplay(date: Date, isDateOnly: boolean): string {
+  if (!isValidDate(date)) {
+    return "";
+  }
   return isDateOnly
     ? format(date, "EEE dd MMM yyyy", { in: utc })
     : format(date, "EEE dd MMM yyyy HH:mm", { in: utc });
+}
+
+function isValidDate(date?: Date): boolean {
+  return !!date && !isNaN(date.getTime());
 }
 
 export function formatTimestampAsDays(timestamp: number): number {

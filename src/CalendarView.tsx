@@ -20,7 +20,7 @@ export function CalendarView({
   setEvents,
   batchConfig,
 }: CalendarViewProps) {
-  if (!batchConfig.startDate) {
+  if (!batchConfig.startDate || isNaN(batchConfig.startDate.getTime())) {
     return <div>Select a start date to view events as a calendar</div>;
   }
 
@@ -36,7 +36,7 @@ export function CalendarView({
         ),
         end: formatDateForCalendarView(
           new Date(
-            e.startOffset + e.duration + batchConfig.startDate!.getTime()
+            e.startOffset + (e.duration || 0) + batchConfig.startDate!.getTime()
           ),
           e.isWholeDayEvent
         ),
