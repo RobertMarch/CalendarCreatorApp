@@ -62,6 +62,6 @@ export function newCalendarEvent(): CalendarEvent {
     isWholeDayEvent: false,
     summary: "",
     description: "",
-    included: true
+    included: true,
   };
 }

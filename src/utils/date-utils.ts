@@ -12,6 +12,15 @@ export function formatDateForIcs(date: Date, isDateOnly: boolean): string {
     : format(date, "yyyyMMdd'T'HHmmss", { in: utc });
 }
 
+export function formatDateForCalendarView(
+  date: Date,
+  isDateOnly: boolean
+): string {
+  return isDateOnly
+    ? format(date, "yyyy-MM-dd", { in: utc })
+    : format(date, "yyyy-MM-dd'T'HH:mm:ss", { in: utc });
+}
+
 export function formatDateForInput(date?: Date): string | null {
   return !!date ? format(date, "yyyy-MM-dd", { in: utc }) : "";
 }

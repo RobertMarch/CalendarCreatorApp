@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import { BatchConfigInput } from "./BatchConfigInput";
+import { CalendarView } from "./CalendarView";
 import { EventsEditor } from "./EventsEditor";
 import { FileButtons } from "./FileButtons";
 import { useBatchConfig } from "./types/calendar-batch-config";
@@ -27,13 +28,25 @@ function App() {
             setBatchConfig={setBatchConfig}
           ></BatchConfigInput>
         </Card>
-        <Card>
-          <EventsEditor
-            events={events}
-            setEvents={setEvents}
-            batchConfig={batchConfig}
-          ></EventsEditor>
-        </Card>
+        <div className="flex flex-wrap gap-4 w-full h-[80vh] min-h-[500px]">
+          <div className="flex-1 min-w-[600px] h-full">
+            <Card additionalClasses="h-full overflow-scroll">
+              <EventsEditor
+                events={events}
+                setEvents={setEvents}
+                batchConfig={batchConfig}
+              ></EventsEditor>
+            </Card>
+          </div>
+          <div className="flex-1 min-w-[600px] h-full">
+            <Card additionalClasses="h-full overflow-scroll">
+              <CalendarView
+                events={events}
+                batchConfig={batchConfig}
+              ></CalendarView>
+            </Card>
+          </div>
+        </div>
         <Card>
           <Footer></Footer>
         </Card>
@@ -43,8 +56,16 @@ function App() {
   );
 }
 
-function Card({ children }: PropsWithChildren) {
-  return <div className="p-4 bg-white rounded-lg">{children}</div>;
+type CardProps = {
+  additionalClasses?: string;
+};
+
+function Card({ additionalClasses, children }: PropsWithChildren<CardProps>) {
+  return (
+    <div className={"p-4 bg-white rounded-lg " + additionalClasses}>
+      {children}
+    </div>
+  );
 }
 
 function Footer() {

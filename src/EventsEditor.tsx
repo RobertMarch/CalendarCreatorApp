@@ -79,7 +79,7 @@ export function EventsEditor({
 
   return (
     <>
-      <div className="flex flex-row">
+      <div className="flex flex-wrap">
         <StyledButton
           displayText="Add event"
           onClick={handleAddEvent}
@@ -99,7 +99,7 @@ export function EventsEditor({
         ></StyledButton>
 
         <div className="content-center">
-          <label className="w-max flex flex-row justify-between">
+          <label className="w-max flex">
             <input
               type="checkbox"
               checked={showDescriptions}
@@ -155,9 +155,9 @@ function EventInput({
   }
 
   return (
-    <div className="flex flex-row border-b border-gray-400 py-4">
+    <div className="flex border-b border-gray-400 py-4">
       <div className="border-r border-gray-400 pr-2 mr-2">
-        <label className="w-max flex flex-row justify-between pb-4">
+        <label className="w-max flex pb-4">
           <input
             type="checkbox"
             checked={calendarEvent.included}
@@ -171,7 +171,7 @@ function EventInput({
           colour="red"
         ></StyledButton>
       </div>
-      <div className="flex flex-col space-between space-y-1">
+      <div className="flex-1 flex flex-col space-between space-y-1">
         <StyledInput
           label="Event title"
           value={calendarEvent.summary}
@@ -186,7 +186,7 @@ function EventInput({
         ) : (
           <></>
         )}
-        <label className="w-min flex flex-row justify-between">
+        <label className="w-min flex">
           <div className="w-36 text-right pr-2">Whole day:</div>
           <input
             type="checkbox"
@@ -278,10 +278,10 @@ function StartTimeInput({
   }
 
   return (
-    <div className="flex flex-row">
+    <div className="flex">
       <div className="w-36 text-right pr-2">Start offset:</div>
       <div className="flex flex-col">
-        <div className="flex flex-row space-between space-x-4">
+        <div className="flex space-between space-x-4">
           <StyledInput
             label="Weeks"
             value={startOffsetParts.weeks}

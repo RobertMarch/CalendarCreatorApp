@@ -42,7 +42,7 @@ const InputTypeToLabelWidths: Record<
   "text" | "date" | "time" | "number",
   string
 > = {
-  text: "w-128",
+  text: "max-w-128 flex-1",
   date: "w-min",
   time: "w-min",
   number: "w-16",
@@ -56,12 +56,12 @@ export function StyledInput({
   flexDirection = "row",
 }: StyledInputProps) {
   const labelClasses: string =
-    flexDirection == "col" ? "w-max flex-col" : "w-min flex-row";
+    flexDirection == "col" ? "w-max flex-col" : "w-full";
   const labelTextDivClass: string = flexDirection == "col" ? "w-max" : "w-36";
   const inputWidth: string = InputTypeToLabelWidths[type];
 
   return (
-    <label className={labelClasses + " flex justify-between"}>
+    <label className={labelClasses + " flex"}>
       <div className={labelTextDivClass + " text-right pr-2"}>{label}:</div>
       <input
         value={value}
