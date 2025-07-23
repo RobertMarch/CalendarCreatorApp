@@ -46,6 +46,14 @@ export function EventsEditor({
     setConfirmDeleteAll(!confirmDeleteAll);
   }
 
+  const allEventsIncluded: boolean = events.every((e) => e.included);
+
+  function toggleAllEvents(): void {
+    const nextEvents: CalendarEvent[] = events.slice();
+    nextEvents.forEach((e) => (e.included = !allEventsIncluded));
+    setEvents(nextEvents);
+  }
+
   function updateEvent(nextEvent: CalendarEvent): void {
     const nextEvents: CalendarEvent[] = events.slice();
     const oldEventIndex: number = nextEvents.findIndex(
@@ -87,6 +95,13 @@ export function EventsEditor({
         <StyledButton
           displayText="Sort events"
           onClick={sortEvents}
+          disabled={!events.length}
+        ></StyledButton>
+        <StyledButton
+          displayText={
+            (allEventsIncluded ? "Exclude" : "Include") + " all events"
+          }
+          onClick={toggleAllEvents}
           disabled={!events.length}
         ></StyledButton>
         <StyledButton
