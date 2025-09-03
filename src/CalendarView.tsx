@@ -111,10 +111,10 @@ export function CalendarView({
       initialView="timeGridWeek"
       businessHours={{
         daysOfWeek: [1, 2, 3, 4, 5],
-        startTime: "08:00:00",
-        endTime: "18:00:00",
+        startTime: "09:00:00",
+        endTime: "17:00:00",
       }}
-      scrollTime="07:00:00"
+      scrollTime="08:00:00"
       height="100%"
       events={fullCalendarEvents}
       nowIndicator={true}
